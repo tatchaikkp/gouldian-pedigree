@@ -161,6 +161,7 @@
         if (parts[0].length === 4) {
           birthDate = new Date(parts[0], parts[1] - 1, parts[2]);
         } else {
+          // สมมติวันที่รูปแบบ 12/1/2025 -> parts[0]=12, parts[1]=1, parts[2]=2025
           birthDate = new Date(parts[2], parts[1] - 1, parts[0]);
         }
       } else {
