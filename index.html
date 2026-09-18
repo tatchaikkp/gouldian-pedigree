@@ -11,6 +11,8 @@
       --primary: #2e7d32;
       --primary-light: #e8f5e9;
       --accent-gold: #d97706;
+      --gold-bg: #fffbe3;
+      --gold-border: #fef08a;
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --text-main: #1e293b;
@@ -115,7 +117,7 @@
     const PARENTS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuLVsFoVzNh0n31YpAmVfOXwn28FveBZMi916Q1sLeAhysmB7vQnTS-hnm_0oGEzxUcg3f9qtShhQF/pub?gid=106258138&single=true&output=csv'; 
     
     let allBirds = [];
-    let historyStack = []; // เก็บประวัติรหัสห่วงย้อนหลัง
+    let historyStack = [];
     let currentBirdId = '';
 
     function loadData() {
@@ -161,30 +163,28 @@
     function handleSearchClick() {
       const ringId = document.getElementById('ringInput').value.trim();
       if (!ringId) return;
-      historyStack = []; // ล้างประวัติการย้อนกลับเมื่อพิมพ์ค้นหาใหม่
+      historyStack = [];
       currentBirdId = ringId;
       searchBird(ringId);
     }
 
-    // กดคลิกที่รหัสพ่อแม่เพื่อไปยังนกตัวนั้น
     function navigateToBird(targetRingId) {
       if (currentBirdId && currentBirdId.toLowerCase() !== targetRingId.toLowerCase()) {
-        historyStack.push(currentBirdId); // บันทึกนกตัวปัจจุบันลงกองประวัติ
+        historyStack.push(currentBirdId);
       }
       currentBirdId = targetRingId;
       searchBird(targetRingId);
     }
 
-    // ฟังก์ชั่นกดปุ่มย้อนกลับ
     function goBack() {
       if (historyStack.length > 0) {
-        const previousBirdId = historyStack.pop(); // ดึงรหัสตัวก่อนหน้าออกมา
+        const previousBirdId = historyStack.pop();
         currentBirdId = previousBirdId;
         searchBird(previousBirdId);
       }
     }
 
-    // แสดงผลตารางสี 3 ช่อง
+    // ฟังก์ชั่นสำหรับเรนเดอร์กล่องตารางสี 3 ช่อง
     function renderColorGrid(birdObj) {
       if (!birdObj) return '<div style="font-size:12px; color:#cbd5e1; margin:6px 0; text-align:center;">ไม่มีข้อมูลสี</div>';
       
@@ -237,7 +237,6 @@
         ? `<div class="country-badge">🌍 สายเลือดนำเข้า: ${countryVal}</div>` 
         : '';
 
-      // แสดงปุ่มย้อนกลับเมื่อมีข้อมูลประวัติการคลิก
       const backButtonHtml = historyStack.length > 0 
         ? `<div class="nav-bar">
             <button class="btn-back" onclick="goBack()">⬅️ ย้อนกลับไปดูนกตัวก่อนหน้า (${historyStack[historyStack.length - 1]})</button>
@@ -264,7 +263,7 @@
         </div>
 
         <div class="tree-section">
-          <h3>🌳 แผนผังสายเลือด (Pedigree Tree)</h3>
+          <h3>🌲 แผนผังสายเลือด (Pedigree Tree)</h3>
           
           <!-- พ่อพันธุ์ -->
           <div class="parent-card father">
