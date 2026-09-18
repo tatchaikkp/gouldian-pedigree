@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบตรวจสอบประวัตินกฟินซ์ 7 สี</title>
+  <!-- ดึง PapaParse สำหรับอ่านไฟล์ CSV จาก Google Sheet -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; max-width: 650px; margin: auto; background: #f4f7f6; color: #333; }
+    h2 { text-align: center; color: #2c3e50; }
+    .search-box { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    input, button { padding: 12px; font-size: 16px; width: 100%; box-sizing: border-box; border-radius: 6px; border: 1px solid #ccc; margin-top: 10px; }
+    button { background-color: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; }
+    button:hover { background-color: #219150; }
+    
+    .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 15px; border-left: 5px solid #27ae60; }
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+    .male { background: #d4e6f1; color: #1b4f72; }
+    .female { background: #fadbd8; color: #78281f; }
+    
+    .tree-container { background: #fff; padding: 15px; border-radius: 10px; margin-top: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .tree-node { border: 1px solid #e0e0e0; background: #fafafa; padding: 10px; border-radius: 6px; margin: 8px 0; font-size: 14px; }
+    .link-id { color: #2980b9; text-decoration: underline; cursor: pointer; font-weight: bold; }
+    .error { color: #e74c3c; text-align: center; margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h2>🌳 ตรวจสอบประวัตินกฟินซ์ (Pedigree)</h2>
+  
+  <div class="search-box">
+    <label for="ringInput"><b>กรอกรหัสห่วง:</b></label>
+    <input type="text" id="ringInput" placeholder="เช่น G7S-2026-001">
+    <button onclick="searchBird()">ค้นหาประวัติ</button>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    // ⚠️ นำลิงก์ CSV ที่ก๊อปปี้มาจากขั้นตอนที่ 1 ข้อ 4 มาวางแทนที่ลิงก์ด้านล่างนี้
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuLVsFoVzNh0n31YpAmVfOXwn28FveBZMi916Q1sLeAhysmB7vQnTS-hnm_0oGEzxUcg3f9qtShhQF/pub?output=csv';
+    
+    let allBirds = [];
+
+    function loadData() {
+      Papa.parse(SHEET_CSV_URL, {
+        download: true,
+        header: true,
+        complete: function(results) {
+          allBirds = results.data;
+        }
+      });
+    }
+    loadData();
+
+    function findBird(id) {
+      if (!id) return null;
+      return allBirds.find(b => b['รหัสห่วง'] && b['รหัสห่วง'].trim().toLowerCase() === id.trim().toLowerCase());
+    }
+
+    function searchBird(targetId = null) {
+      const ringId = targetId || document.getElementById('ringInput').value.trim();
+      if (!ringId) return;
+
+      document.getElementById('ringInput').value = ringId;
+      const resultDiv = document.getElementById('result');
+      const bird = findBird(ringId);
+
+      if (!bird) {
+        resultDiv.innerHTML = `<p class="error">❌ ไม่พบข้อมูลนกรหัสห่วง "${ringId}" ในระบบ</p>`;
+        return;
+      }
+
+      const father = findBird(bird['รหัสพ่อพันธุ์']);
+      const mother = findBird(bird['รหัสแม่พันธุ์']);
+
+      const genderBadge = bird['เพศ'] === 'ผู้' 
+        ? '<span class="badge male">♂ เพศผู้</span>' 
+        : (bird['เพศ'] === 'เมีย' ? '<span class="badge female">♀ เพศเมีย</span>' : '');
+
+      resultDiv.innerHTML = `
+        <div class="card">
+          <h3>รหัสห่วง: ${bird['รหัสห่วง']} ${genderBadge}</h3>
+          <p><b>สีหัว:</b> ${bird['สีหัว'] || '-'} | <b>สีอก:</b> ${bird['สีอก'] || '-'} | <b>สีตัว:</b> ${bird['สีตัว'] || '-'}</p>
+          <p><b>วันเกิด:</b> ${bird['วันเกิด'] || '-'}</p>
+          <p><b>จุดเด่น:</b> ${bird['จุดเด่น'] || '-'}</p>
+        </div>
+
+        <div class="tree-container">
+          <h4>🌲 แผนผังสายเลือด (Pedigree Tree)</h4>
+          
+          <div class="tree-node" style="border-left: 4px solid #3498db;">
+            <b>พ่อพันธุ์ (Father):</b> ${renderLink(bird['รหัสพ่อพันธุ์'])}
+            ${father ? `<br><small>(${father['สีหัว']}/${father['สีอก']}/${father['สีตัว']})</small>` : ''}
+            
+            <div style="margin-left: 15px; margin-top: 5px; font-size: 13px; color: #555;">
+              ├─ <b>ปู่:</b> ${renderLink(father ? father['รหัสพ่อพันธุ์'] : '')}<br>
+              └─ <b>ย่า:</b> ${renderLink(father ? father['รหัสแม่พันธุ์'] : '')}
+            </div>
+          </div>
+
+          <div class="tree-node" style="border-left: 4px solid #e74c3c;">
+            <b>แม่พันธุ์ (Mother):</b> ${renderLink(bird['รหัสแม่พันธุ์'])}
+            ${mother ? `<br><small>(${mother['สีหัว']}/${mother['สีอก']}/${mother['สีตัว']})</small>` : ''}
+            
+            <div style="margin-left: 15px; margin-top: 5px; font-size: 13px; color: #555;">
+              ├─ <b>ตา:</b> ${renderLink(mother ? mother['รหัสพ่อพันธุ์'] : '')}<br>
+              └─ <b>ยาย:</b> ${renderLink(mother ? mother['รหัสแม่พันธุ์'] : '')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderLink(id) {
+      if (!id || id === '-' || id.trim() === '') return '<span style="color:#aaa;">ไม่ระบุ</span>';
+      const exists = findBird(id);
+      if (exists) {
+        return `<span class="link-id" onclick="searchBird('${id}')">${id}</span>`;
+      }
+      return `<span>${id}</span> <small style="color:#aaa;">(ไม่มีข้อมูล)</small>`;
+    }
+  </script>
+</body>
+</html>
