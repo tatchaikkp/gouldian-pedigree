@@ -243,8 +243,8 @@
             <div class="color-item"><span>สีตัว</span><strong>${getValue(bird, ['สีตัว', 'BODY']) || '-'}</strong></div>
           </div>
 
-          <div class="info-row"><span>วันเกิด / วันฟัก:</span> <strong>${getValue(bird, ['วันเกิด', 'BORN']) || '-'}</strong></div>
-          <div class="info-row"><span>จุดเด่น / หมายเหตุ:</span> <strong>${getValue(bird, ['จุดเด่น', 'Note', 'หมายเหตุ']) || '-'}</strong></div>
+          <div class="info-row"><span>วันเกิด:</span> <strong>${getValue(bird, ['วันเกิด', 'BORN']) || '-'}</strong></div>
+          <div class="info-row"><span>จุดเด่น:</span> <strong>${getValue(bird, ['จุดเด่น', 'Note', 'หมายเหตุ']) || '-'}</strong></div>
           
           ${awardInfo}
         </div>
@@ -257,7 +257,7 @@
               <span>พ่อพันธุ์ (Father): ${renderLink(fatherId)}</span>
               ${father && getValue(father, ['สายเลือด/ประเทศ', 'ประเทศ']) ? `<span>🌍 ${getValue(father, ['สายเลือด/ประเทศ', 'ประเทศ'])}</span>` : ''}
             </div>
-            <div class="parent-color">${father ? `สี: ${getValue(father, ['สีหัว', 'HEAD'])}/${getValue(father, ['สีอก', 'CHEST'])}/${getValue(father, ['สีตัว', 'BODY'])}` : ''}</div>
+            <div class="parent-color">${father ? `สี: ${getValue(father, สีหัว['สีหัว', 'HEAD'])}/${getValue(father, สีอก['สีอก', 'CHEST'])}/${getValue(father, สีตัว['สีตัว', 'BODY'])}` : ''}</div>
             
             <div class="grandparents">
               <div>├─ <b>ปู่ (Father's Father):</b> ${renderLink(father ? getValue(father, ['รหัสพ่อนก', 'รหัสพ่อพันธุ์', 'พ่อ']) : '')}</div>
