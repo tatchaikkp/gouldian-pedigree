@@ -11,8 +11,6 @@
       --primary: #2e7d32;
       --primary-light: #e8f5e9;
       --accent-gold: #d97706;
-      --gold-bg: #fffbe3;
-      --gold-border: #fef08a;
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --text-main: #1e293b;
@@ -43,9 +41,9 @@
     button:hover { background: #1b5e20; }
 
     /* Back Button Bar */
-    .nav-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .btn-back { background: #ffffff; color: var(--text-main); border: 1.5px solid var(--border-color); padding: 8px 16px; font-size: 14px; font-weight: 600; border-radius: 20px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
-    .btn-back:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+    .nav-bar { display: flex; align-items: center; justify-content: flex-start; margin-bottom: 14px; }
+    .btn-back { background: #ffffff; color: #1e293b; border: 2px solid var(--primary); padding: 10px 18px; font-size: 14px; font-weight: 700; border-radius: 25px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 3px 8px rgba(0,0,0,0.08); }
+    .btn-back:hover { background: var(--primary-light); color: var(--primary); }
 
     /* Main Bird Card */
     .bird-card { background: var(--card-bg); border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05); border: 1px solid var(--border-color); margin-bottom: 20px; position: relative; overflow: hidden; }
@@ -67,7 +65,7 @@
     .info-row span { color: var(--text-muted); }
 
     /* Hall of Fame / Award Box Design */
-    .award-card { background: linear-gradient(135deg, #fffbe3 0%, #fff7ed 100%); border: 1.5px solid #fde047; padding: 14px 16px; border-radius: 12px; margin-top: 14px; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.08); position: relative; }
+    .award-card { background: linear-gradient(135deg, #fffbe3 0%, #fff7ed 100%); border: 1.5px solid #fde047; padding: 14px 16px; border-radius: 12px; margin-top: 14px; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.08); }
     .award-title { color: var(--accent-gold); font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
     .award-content { font-size: 14px; color: #78350f; font-weight: 600; line-height: 1.5; }
 
@@ -88,8 +86,8 @@
     .grandparents { background: #ffffff; border-radius: 8px; padding: 8px 12px; font-size: 12px; border: 1px solid var(--border-color); margin-top: 10px; }
     .grandparents div { margin: 4px 0; }
 
-    .link-id { color: var(--primary); text-decoration: underline; cursor: pointer; font-weight: 600; padding: 2px 4px; border-radius: 4px; transition: 0.15s; }
-    .link-id:hover { background: var(--primary-light); color: #1b5e20; }
+    .link-id { color: var(--primary); text-decoration: underline; cursor: pointer; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #e8f5e9; transition: 0.15s; }
+    .link-id:hover { background: #2e7d32; color: #ffffff; }
     .error { color: #ef4444; text-align: center; font-weight: 600; padding: 20px; }
   </style>
 </head>
@@ -117,7 +115,8 @@
     const PARENTS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuLVsFoVzNh0n31YpAmVfOXwn28FveBZMi916Q1sLeAhysmB7vQnTS-hnm_0oGEzxUcg3f9qtShhQF/pub?gid=106258138&single=true&output=csv'; 
     
     let allBirds = [];
-    let historyStack = [];
+    let historyStack = []; // เก็บประวัติรหัสห่วงย้อนหลัง
+    let currentBirdId = '';
 
     function loadData() {
       allBirds = [];
@@ -162,27 +161,33 @@
     function handleSearchClick() {
       const ringId = document.getElementById('ringInput').value.trim();
       if (!ringId) return;
-      historyStack = [];
-      searchBird(ringId, false);
+      historyStack = []; // ล้างประวัติการย้อนกลับเมื่อพิมพ์ค้นหาใหม่
+      currentBirdId = ringId;
+      searchBird(ringId);
     }
 
-    function navigateToBird(ringId) {
-      if (historyStack.length === 0 || historyStack[historyStack.length - 1] !== ringId) {
-        const currentRing = document.getElementById('ringInput').value.trim();
-        if (currentRing) historyStack.push(currentRing);
+    // กดคลิกที่รหัสพ่อแม่เพื่อไปยังนกตัวนั้น
+    function navigateToBird(targetRingId) {
+      if (currentBirdId && currentBirdId.toLowerCase() !== targetRingId.toLowerCase()) {
+        historyStack.push(currentBirdId); // บันทึกนกตัวปัจจุบันลงกองประวัติ
       }
-      searchBird(ringId, false);
+      currentBirdId = targetRingId;
+      searchBird(targetRingId);
     }
 
+    // ฟังก์ชั่นกดปุ่มย้อนกลับ
     function goBack() {
       if (historyStack.length > 0) {
-        const previousRing = historyStack.pop();
-        searchBird(previousRing, true);
+        const previousBirdId = historyStack.pop(); // ดึงรหัสตัวก่อนหน้าออกมา
+        currentBirdId = previousBirdId;
+        searchBird(previousBirdId);
       }
     }
 
-    // ฟังก์ชั่นช่วยสร้างตารางสี 3 ช่อง
+    // แสดงผลตารางสี 3 ช่อง
     function renderColorGrid(birdObj) {
+      if (!birdObj) return '<div style="font-size:12px; color:#cbd5e1; margin:6px 0; text-align:center;">ไม่มีข้อมูลสี</div>';
+      
       const head = getValue(birdObj, ['สีหัว', 'HEAD']) || '-';
       const chest = getValue(birdObj, ['สีอก', 'CHEST']) || '-';
       const body = getValue(birdObj, ['สีตัว', 'BODY']) || '-';
@@ -196,11 +201,8 @@
       `;
     }
 
-    function searchBird(targetId, isBackAction = false) {
+    function searchBird(ringId) {
       const ringInput = document.getElementById('ringInput');
-      const ringId = targetId || ringInput.value.trim();
-      if (!ringId) return;
-
       ringInput.value = ringId;
       const resultDiv = document.getElementById('result');
       const bird = findBird(ringId);
@@ -235,9 +237,10 @@
         ? `<div class="country-badge">🌍 สายเลือดนำเข้า: ${countryVal}</div>` 
         : '';
 
+      // แสดงปุ่มย้อนกลับเมื่อมีข้อมูลประวัติการคลิก
       const backButtonHtml = historyStack.length > 0 
         ? `<div class="nav-bar">
-            <button class="btn-back" onclick="goBack()">⬅️ ย้อนกลับไปนกตัวก่อนหน้า</button>
+            <button class="btn-back" onclick="goBack()">⬅️ ย้อนกลับไปดูนกตัวก่อนหน้า (${historyStack[historyStack.length - 1]})</button>
            </div>` 
         : '';
 
@@ -261,7 +264,7 @@
         </div>
 
         <div class="tree-section">
-          <h3>🌲 แผนผังสายเลือด (Pedigree Tree)</h3>
+          <h3>🌳 แผนผังสายเลือด (Pedigree Tree)</h3>
           
           <!-- พ่อพันธุ์ -->
           <div class="parent-card father">
@@ -270,7 +273,7 @@
               ${father && getValue(father, ['สายเลือด/ประเทศ', 'ประเทศ']) ? `<span>🌍 ${getValue(father, ['สายเลือด/ประเทศ', 'ประเทศ'])}</span>` : ''}
             </div>
             
-            ${father ? renderColorGrid(father) : '<div style="font-size:12px; color:#cbd5e1; margin:6px 0;">ไม่มีข้อมูลสี</div>'}
+            ${renderColorGrid(father)}
             
             <div class="grandparents">
               <div>├─ <b>ปู่ (Father's Father):</b> ${renderLink(father ? getValue(father, ['รหัสพ่อนก', 'รหัสพ่อพันธุ์', 'พ่อ']) : '')}</div>
@@ -285,7 +288,7 @@
               ${mother && getValue(mother, ['สายเลือด/ประเทศ', 'ประเทศ']) ? `<span>🌍 ${getValue(mother, ['สายเลือด/ประเทศ', 'ประเทศ'])}</span>` : ''}
             </div>
             
-            ${mother ? renderColorGrid(mother) : '<div style="font-size:12px; color:#cbd5e1; margin:6px 0;">ไม่มีข้อมูลสี</div>'}
+            ${renderColorGrid(mother)}
             
             <div class="grandparents">
               <div>├─ <b>ตา (Mother's Father):</b> ${renderLink(mother ? getValue(mother, ['รหัสพ่อนก', 'รหัสพ่อพันธุ์', 'พ่อ']) : '')}</div>
