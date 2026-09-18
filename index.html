@@ -58,9 +58,10 @@
     .badge.male { background: var(--male-bg); color: var(--male-color); }
     .badge.female { background: var(--female-bg); color: var(--female-color); }
 
-    .color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: #f1f5f9; padding: 12px; border-radius: 10px; margin: 12px 0; text-align: center; }
+    /* Grid แสดงสีแบบ 3 ช่อง */
+    .color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: #f1f5f9; padding: 10px 8px; border-radius: 10px; margin: 10px 0; text-align: center; }
     .color-item span { font-size: 11px; color: var(--text-muted); display: block; }
-    .color-item strong { font-size: 14px; color: var(--text-main); }
+    .color-item strong { font-size: 13.5px; color: var(--text-main); }
 
     .info-row { font-size: 14px; margin: 8px 0; color: var(--text-main); display: flex; gap: 8px; }
     .info-row span { color: var(--text-muted); }
@@ -77,15 +78,14 @@
     .tree-section { background: var(--card-bg); border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
     .tree-section h3 { font-size: 16px; font-weight: 700; margin: 0 0 16px 0; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
 
-    .parent-card { background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 12px; transition: 0.2s; }
+    .parent-card { background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 14px; transition: 0.2s; }
     .parent-card:hover { border-color: var(--primary); }
     .parent-card.father { border-left: 4px solid var(--male-color); }
     .parent-card.mother { border-left: 4px solid var(--female-color); }
 
-    .parent-header { display: flex; justify-content: space-between; font-size: 13.5px; font-weight: 600; margin-bottom: 6px; }
-    .parent-color { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+    .parent-header { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
 
-    .grandparents { background: #ffffff; border-radius: 8px; padding: 8px 12px; font-size: 12px; border: 1px solid var(--border-color); }
+    .grandparents { background: #ffffff; border-radius: 8px; padding: 8px 12px; font-size: 12px; border: 1px solid var(--border-color); margin-top: 10px; }
     .grandparents div { margin: 4px 0; }
 
     .link-id { color: var(--primary); text-decoration: underline; cursor: pointer; font-weight: 600; padding: 2px 4px; border-radius: 4px; transition: 0.15s; }
@@ -117,7 +117,7 @@
     const PARENTS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuLVsFoVzNh0n31YpAmVfOXwn28FveBZMi916Q1sLeAhysmB7vQnTS-hnm_0oGEzxUcg3f9qtShhQF/pub?gid=106258138&single=true&output=csv'; 
     
     let allBirds = [];
-    let historyStack = []; // สำหรับเก็บประวัติการคลิกเพื่อใช้ย้อนกลับ
+    let historyStack = [];
 
     function loadData() {
       allBirds = [];
@@ -162,7 +162,7 @@
     function handleSearchClick() {
       const ringId = document.getElementById('ringInput').value.trim();
       if (!ringId) return;
-      historyStack = []; // ล้างประวัติเมื่อพิมพ์ค้นหาใหม่
+      historyStack = [];
       searchBird(ringId, false);
     }
 
@@ -179,6 +179,21 @@
         const previousRing = historyStack.pop();
         searchBird(previousRing, true);
       }
+    }
+
+    // ฟังก์ชั่นช่วยสร้างตารางสี 3 ช่อง
+    function renderColorGrid(birdObj) {
+      const head = getValue(birdObj, ['สีหัว', 'HEAD']) || '-';
+      const chest = getValue(birdObj, ['สีอก', 'CHEST']) || '-';
+      const body = getValue(birdObj, ['สีตัว', 'BODY']) || '-';
+
+      return `
+        <div class="color-grid">
+          <div class="color-item"><span>สีหัว</span><strong>${head}</strong></div>
+          <div class="color-item"><span>สีอก</span><strong>${chest}</strong></div>
+          <div class="color-item"><span>สีตัว</span><strong>${body}</strong></div>
+        </div>
+      `;
     }
 
     function searchBird(targetId, isBackAction = false) {
@@ -237,27 +252,25 @@
 
           ${countryInfo}
 
-          <div class="color-grid">
-            <div class="color-item"><span>สีหัว</span><strong>${getValue(bird, ['สีหัว', 'HEAD']) || '-'}</strong></div>
-            <div class="color-item"><span>สีอก</span><strong>${getValue(bird, ['สีอก', 'CHEST']) || '-'}</strong></div>
-            <div class="color-item"><span>สีตัว</span><strong>${getValue(bird, ['สีตัว', 'BODY']) || '-'}</strong></div>
-          </div>
+          ${renderColorGrid(bird)}
 
-          <div class="info-row"><span>วันเกิด:</span> <strong>${getValue(bird, ['วันเกิด', 'BORN']) || '-'}</strong></div>
-          <div class="info-row"><span>จุดเด่น:</span> <strong>${getValue(bird, ['จุดเด่น', 'Note', 'หมายเหตุ']) || '-'}</strong></div>
+          <div class="info-row"><span>วันเกิด / วันฟัก:</span> <strong>${getValue(bird, ['วันเกิด', 'BORN']) || '-'}</strong></div>
+          <div class="info-row"><span>จุดเด่น / หมายเหตุ:</span> <strong>${getValue(bird, ['จุดเด่น', 'Note', 'หมายเหตุ']) || '-'}</strong></div>
           
           ${awardInfo}
         </div>
 
         <div class="tree-section">
-          <h3>🌳 แผนผังสายเลือด (Pedigree Tree)</h3>
+          <h3>🌲 แผนผังสายเลือด (Pedigree Tree)</h3>
           
+          <!-- พ่อพันธุ์ -->
           <div class="parent-card father">
             <div class="parent-header">
               <span>พ่อพันธุ์ (Father): ${renderLink(fatherId)}</span>
               ${father && getValue(father, ['สายเลือด/ประเทศ', 'ประเทศ']) ? `<span>🌍 ${getValue(father, ['สายเลือด/ประเทศ', 'ประเทศ'])}</span>` : ''}
             </div>
-            <div class="parent-color">${father ? `สี: ${getValue(father, สีหัว['สีหัว', 'HEAD'])}/${getValue(father, สีอก['สีอก', 'CHEST'])}/${getValue(father, สีตัว['สีตัว', 'BODY'])}` : ''}</div>
+            
+            ${father ? renderColorGrid(father) : '<div style="font-size:12px; color:#cbd5e1; margin:6px 0;">ไม่มีข้อมูลสี</div>'}
             
             <div class="grandparents">
               <div>├─ <b>ปู่ (Father's Father):</b> ${renderLink(father ? getValue(father, ['รหัสพ่อนก', 'รหัสพ่อพันธุ์', 'พ่อ']) : '')}</div>
@@ -265,12 +278,14 @@
             </div>
           </div>
 
+          <!-- แม่พันธุ์ -->
           <div class="parent-card mother">
             <div class="parent-header">
               <span>แม่พันธุ์ (Mother): ${renderLink(motherId)}</span>
               ${mother && getValue(mother, ['สายเลือด/ประเทศ', 'ประเทศ']) ? `<span>🌍 ${getValue(mother, ['สายเลือด/ประเทศ', 'ประเทศ'])}</span>` : ''}
             </div>
-            <div class="parent-color">${mother ? `สี: ${getValue(mother, ['สีหัว', 'HEAD'])}/${getValue(mother, ['สีอก', 'CHEST'])}/${getValue(mother, ['สีตัว', 'BODY'])}` : ''}</div>
+            
+            ${mother ? renderColorGrid(mother) : '<div style="font-size:12px; color:#cbd5e1; margin:6px 0;">ไม่มีข้อมูลสี</div>'}
             
             <div class="grandparents">
               <div>├─ <b>ตา (Mother's Father):</b> ${renderLink(mother ? getValue(mother, ['รหัสพ่อนก', 'รหัสพ่อพันธุ์', 'พ่อ']) : '')}</div>
