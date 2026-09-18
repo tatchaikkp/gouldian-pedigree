@@ -151,6 +151,39 @@
       return '';
     }
 
+    // ฟังก์ชั่นคำนวณอายุจากข้อความวันเกิด
+    function calculateAge(dateStr) {
+      if (!dateStr || dateStr === '-') return '';
+      
+      // แยกตัวเลข ว/ด/ป หรือ ป-ด-ว
+      const parts = dateStr.split(/[/.-]/);
+      let birthDate;
+      if (parts.length === 3) {
+        if (parts[0].length === 4) {
+          birthDate = new Date(parts[0], parts[1] - 1, parts[2]);
+        } else {
+          birthDate = new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+      } else {
+        birthDate = new Date(dateStr);
+      }
+
+      if (isNaN(birthDate.getTime())) return '';
+
+      const today = new Date();
+      let diffTime = Math.abs(today - birthDate);
+      let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      let months = Math.floor(diffDays / 30);
+      let days = diffDays % 30;
+
+      if (months > 0) {
+        return ` <span style="color:var(--primary); font-weight:600;">(อายุ ${months} เดือน ${days} วัน)</span>`;
+      } else {
+        return ` <span style="color:var(--primary); font-weight:600;">(อายุ ${days} วัน)</span>`;
+      }
+    }
+
     function findBird(id) {
       if (!id) return null;
       const cleanId = String(id).trim().toLowerCase();
@@ -251,6 +284,9 @@
         ? `<div class="country-badge">🌍 สายเลือดนำเข้า: ${countryVal}</div>` 
         : '';
 
+      const birthDateStr = getValue(bird, ['วันเกิด', 'BORN']) || '-';
+      const ageStr = calculateAge(birthDateStr);
+
       const backButtonHtml = historyStack.length > 0 
         ? `<div class="nav-bar">
             <button class="btn-back" onclick="goBack()">⬅️ ย้อนกลับไปดูนกตัวก่อนหน้า (${historyStack[historyStack.length - 1]})</button>
@@ -270,7 +306,7 @@
 
           ${renderColorGrid(bird)}
 
-          <div class="info-row"><span>วันเกิด / วันฟัก:</span> <strong>${getValue(bird, ['วันเกิด', 'BORN']) || '-'}</strong></div>
+          <div class="info-row"><span>วันเกิด / วันฟัก:</span> <strong>${birthDateStr}${ageStr}</strong></div>
           <div class="info-row"><span>จุดเด่น / หมายเหตุ:</span> <strong>${getValue(bird, ['จุดเด่น', 'Note', 'หมายเหตุ']) || '-'}</strong></div>
           
           ${awardBoxHtml}
