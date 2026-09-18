@@ -10,7 +10,9 @@
     :root {
       --primary: #2e7d32;
       --primary-light: #e8f5e9;
-      --accent: #f59e0b;
+      --accent-gold: #d97706;
+      --gold-bg: #fffbe3;
+      --gold-border: #fef08a;
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --text-main: #1e293b;
@@ -26,10 +28,12 @@
     body { background-color: var(--bg); color: var(--text-main); margin: 0; padding: 20px 12px; min-height: 100vh; }
     .container { max-width: 600px; margin: 0 auto; }
 
+    /* Header & Logo */
     .header { text-align: center; margin-bottom: 24px; }
-    .logo { width: 120px; height: 120px; margin: 0 auto 12px auto; display: block; object-fit: contain; border-radius: 50%; border: 3px solid var(--accent); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .logo { width: 110px; height: 110px; margin: 0 auto 12px auto; display: block; object-fit: contain; border-radius: 50%; border: 3px solid var(--accent-gold); box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2); }
     .header p { font-size: 15px; color: var(--text-muted); margin: 0; font-weight: 500; }
 
+    /* Search Box */
     .search-box { background: var(--card-bg); padding: 20px; border-radius: 16px; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--border-color); }
     .search-box label { font-size: 14px; font-weight: 600; color: var(--text-main); display: block; margin-bottom: 8px; }
     .input-group { display: flex; gap: 8px; }
@@ -38,6 +42,12 @@
     button { background: var(--primary); color: white; border: none; padding: 12px 20px; font-size: 15px; font-weight: 600; border-radius: 10px; cursor: pointer; transition: 0.2s; white-space: nowrap; }
     button:hover { background: #1b5e20; }
 
+    /* Back Button Bar */
+    .nav-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .btn-back { background: #ffffff; color: var(--text-main); border: 1.5px solid var(--border-color); padding: 8px 16px; font-size: 14px; font-weight: 600; border-radius: 20px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .btn-back:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+
+    /* Main Bird Card */
     .bird-card { background: var(--card-bg); border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05); border: 1px solid var(--border-color); margin-bottom: 20px; position: relative; overflow: hidden; }
     .bird-card::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--primary); }
     
@@ -55,24 +65,31 @@
     .info-row { font-size: 14px; margin: 8px 0; color: var(--text-main); display: flex; gap: 8px; }
     .info-row span { color: var(--text-muted); }
 
-    .award-box { background: #fffbe3; border: 1px solid #fef08a; padding: 12px; border-radius: 10px; margin-top: 12px; color: #854d0e; font-size: 13.5px; }
-    .award-box strong { display: block; margin-bottom: 2px; }
+    /* Hall of Fame / Award Box Design */
+    .award-card { background: linear-gradient(135deg, #fffbe3 0%, #fff7ed 100%); border: 1.5px solid #fde047; padding: 14px 16px; border-radius: 12px; margin-top: 14px; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.08); position: relative; }
+    .award-title { color: var(--accent-gold); font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .award-content { font-size: 14px; color: #78350f; font-weight: 600; line-height: 1.5; }
 
+    /* Country Badge */
+    .country-badge { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+
+    /* Tree View Section */
     .tree-section { background: var(--card-bg); border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
     .tree-section h3 { font-size: 16px; font-weight: 700; margin: 0 0 16px 0; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
 
-    .parent-card { background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+    .parent-card { background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 12px; transition: 0.2s; }
+    .parent-card:hover { border-color: var(--primary); }
     .parent-card.father { border-left: 4px solid var(--male-color); }
     .parent-card.mother { border-left: 4px solid var(--female-color); }
 
-    .parent-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .parent-header { display: flex; justify-content: space-between; font-size: 13.5px; font-weight: 600; margin-bottom: 6px; }
     .parent-color { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
 
     .grandparents { background: #ffffff; border-radius: 8px; padding: 8px 12px; font-size: 12px; border: 1px solid var(--border-color); }
     .grandparents div { margin: 4px 0; }
 
-    .link-id { color: var(--primary); text-decoration: underline; cursor: pointer; font-weight: 600; }
-    .link-id:hover { color: #1b5e20; }
+    .link-id { color: var(--primary); text-decoration: underline; cursor: pointer; font-weight: 600; padding: 2px 4px; border-radius: 4px; transition: 0.15s; }
+    .link-id:hover { background: var(--primary-light); color: #1b5e20; }
     .error { color: #ef4444; text-align: center; font-weight: 600; padding: 20px; }
   </style>
 </head>
@@ -88,7 +105,7 @@
       <label for="ringInput">ค้นหาข้อมูลหมายเลขห่วง:</label>
       <div class="input-group">
         <input type="text" id="ringInput" placeholder="พิมพ์รหัสห่วง เช่น ZAM01">
-        <button onclick="searchBird()">ค้นหา</button>
+        <button onclick="handleSearchClick()">ค้นหา</button>
       </div>
     </div>
 
@@ -100,6 +117,7 @@
     const PARENTS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuLVsFoVzNh0n31YpAmVfOXwn28FveBZMi916Q1sLeAhysmB7vQnTS-hnm_0oGEzxUcg3f9qtShhQF/pub?gid=106258138&single=true&output=csv'; 
     
     let allBirds = [];
+    let historyStack = []; // สำหรับเก็บประวัติการคลิกเพื่อใช้ย้อนกลับ
 
     function loadData() {
       allBirds = [];
@@ -118,7 +136,6 @@
     }
     loadData();
 
-    // ฟังก์ชั่นช่วยดึงข้อมูลจากหลายชื่อคอลัมน์ และตัดช่องว่างส่วนเกิน
     function getValue(obj, keys) {
       if (!obj) return '';
       if (!Array.isArray(keys)) keys = [keys];
@@ -142,7 +159,29 @@
       });
     }
 
-    function searchBird(targetId = null) {
+    function handleSearchClick() {
+      const ringId = document.getElementById('ringInput').value.trim();
+      if (!ringId) return;
+      historyStack = []; // ล้างประวัติเมื่อพิมพ์ค้นหาใหม่
+      searchBird(ringId, false);
+    }
+
+    function navigateToBird(ringId) {
+      if (historyStack.length === 0 || historyStack[historyStack.length - 1] !== ringId) {
+        const currentRing = document.getElementById('ringInput').value.trim();
+        if (currentRing) historyStack.push(currentRing);
+      }
+      searchBird(ringId, false);
+    }
+
+    function goBack() {
+      if (historyStack.length > 0) {
+        const previousRing = historyStack.pop();
+        searchBird(previousRing, true);
+      }
+    }
+
+    function searchBird(targetId, isBackAction = false) {
       const ringInput = document.getElementById('ringInput');
       const ringId = targetId || ringInput.value.trim();
       if (!ringId) return;
@@ -157,9 +196,7 @@
       }
 
       const birdId = getValue(bird, ['รหัสห่วง', 'รหัสพ่อนก', 'รหัสแม่นก', 'ID']);
-      // รองรับทั้ง 'รหัสพ่อนก' และ 'รหัสพ่อพันธุ์'
       const fatherId = getValue(bird, ['รหัสพ่อนก', 'รหัสพ่อพันธุ์', 'พ่อ', 'Father ID', 'Father']);
-      // รองรับทั้ง 'รหัสแม่นก' และ 'รหัสแม่พันธุ์'
       const motherId = getValue(bird, ['รหัสแม่นก', 'รหัสแม่พันธุ์', 'แม่', 'Mother ID', 'Mother']);
 
       const father = findBird(fatherId);
@@ -172,20 +209,33 @@
 
       const awardVal = getValue(bird, ['ประวัติรางวัล', 'รางวัล']);
       const awardInfo = awardVal && awardVal !== '-' 
-        ? `<div class="award-box">🏆 <strong>ประวัติรางวัล / ผลงาน:</strong> ${awardVal}</div>` 
+        ? `<div class="award-card">
+            <div class="award-title">🎖️ ประวัติรางวัล & เกียรติยศ (Hall of Fame)</div>
+            <div class="award-content">${awardVal}</div>
+           </div>` 
         : '';
 
       const countryVal = getValue(bird, ['สายเลือด/ประเทศ', 'ประเทศ', 'สายเลือด']);
       const countryInfo = countryVal && countryVal !== '-' 
-        ? `<div class="info-row"><span>สายเลือด/ประเทศ:</span> 🌍 <strong>${countryVal}</strong></div>` 
+        ? `<div class="country-badge">🌍 สายเลือดนำเข้า: ${countryVal}</div>` 
+        : '';
+
+      const backButtonHtml = historyStack.length > 0 
+        ? `<div class="nav-bar">
+            <button class="btn-back" onclick="goBack()">⬅️ ย้อนกลับไปนกตัวก่อนหน้า</button>
+           </div>` 
         : '';
 
       resultDiv.innerHTML = `
+        ${backButtonHtml}
+
         <div class="bird-card">
           <div class="card-title">
             <h2>ห่วงหมายเลข: ${birdId}</h2>
             ${genderBadge}
           </div>
+
+          ${countryInfo}
 
           <div class="color-grid">
             <div class="color-item"><span>สีหัว</span><strong>${getValue(bird, ['สีหัว', 'HEAD']) || '-'}</strong></div>
@@ -193,14 +243,14 @@
             <div class="color-item"><span>สีตัว</span><strong>${getValue(bird, ['สีตัว', 'BODY']) || '-'}</strong></div>
           </div>
 
-          ${countryInfo}
           <div class="info-row"><span>วันเกิด / วันฟัก:</span> <strong>${getValue(bird, ['วันเกิด', 'BORN']) || '-'}</strong></div>
           <div class="info-row"><span>จุดเด่น / หมายเหตุ:</span> <strong>${getValue(bird, ['จุดเด่น', 'Note', 'หมายเหตุ']) || '-'}</strong></div>
+          
           ${awardInfo}
         </div>
 
         <div class="tree-section">
-          <h3>🌲 แผนผังสายเลือด (Pedigree Tree)</h3>
+          <h3>🌳 แผนผังสายเลือด (Pedigree Tree)</h3>
           
           <div class="parent-card father">
             <div class="parent-header">
@@ -235,7 +285,7 @@
       if (!id || id === '-' || id.trim() === '') return '<span style="color:#cbd5e1;">ไม่ระบุ</span>';
       const exists = findBird(id);
       if (exists) {
-        return `<span class="link-id" onclick="searchBird('${id}')">${id}</span>`;
+        return `<span class="link-id" onclick="navigateToBird('${id}')">${id}</span>`;
       }
       return `<span>${id}</span> <small style="color:#94a3b8;">(ไม่มีข้อมูล)</small>`;
     }
