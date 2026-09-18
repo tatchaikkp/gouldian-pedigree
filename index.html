@@ -26,12 +26,10 @@
     body { background-color: var(--bg); color: var(--text-main); margin: 0; padding: 20px 12px; min-height: 100vh; }
     .container { max-width: 600px; margin: 0 auto; }
 
-    /* Header & Logo */
     .header { text-align: center; margin-bottom: 24px; }
     .logo { width: 120px; height: 120px; margin: 0 auto 12px auto; display: block; object-fit: contain; border-radius: 50%; border: 3px solid var(--accent); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .header p { font-size: 15px; color: var(--text-muted); margin: 0; font-weight: 500; }
 
-    /* Search Box */
     .search-box { background: var(--card-bg); padding: 20px; border-radius: 16px; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--border-color); }
     .search-box label { font-size: 14px; font-weight: 600; color: var(--text-main); display: block; margin-bottom: 8px; }
     .input-group { display: flex; gap: 8px; }
@@ -40,7 +38,6 @@
     button { background: var(--primary); color: white; border: none; padding: 12px 20px; font-size: 15px; font-weight: 600; border-radius: 10px; cursor: pointer; transition: 0.2s; white-space: nowrap; }
     button:hover { background: #1b5e20; }
 
-    /* Main Bird Card */
     .bird-card { background: var(--card-bg); border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05); border: 1px solid var(--border-color); margin-bottom: 20px; position: relative; overflow: hidden; }
     .bird-card::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--primary); }
     
@@ -58,11 +55,9 @@
     .info-row { font-size: 14px; margin: 8px 0; color: var(--text-main); display: flex; gap: 8px; }
     .info-row span { color: var(--text-muted); }
 
-    /* Highlights (Country & Awards) */
     .award-box { background: #fffbe3; border: 1px solid #fef08a; padding: 12px; border-radius: 10px; margin-top: 12px; color: #854d0e; font-size: 13.5px; }
     .award-box strong { display: block; margin-bottom: 2px; }
 
-    /* Tree View Section */
     .tree-section { background: var(--card-bg); border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
     .tree-section h3 { font-size: 16px; font-weight: 700; margin: 0 0 16px 0; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
 
@@ -123,7 +118,7 @@
     }
     loadData();
 
-    // ฟังก์ชั่นช่วยดึงข้อมูลแบบไม่สนชื่อคอลัมน์เล็กๆ น้อยๆ และตัดช่องว่าง
+    // ฟังก์ชั่นช่วยดึงข้อมูลจากหลายชื่อคอลัมน์ และตัดช่องว่างส่วนเกิน
     function getValue(obj, keys) {
       if (!obj) return '';
       if (!Array.isArray(keys)) keys = [keys];
@@ -142,7 +137,6 @@
       if (!id) return null;
       const cleanId = String(id).trim().toLowerCase();
       return allBirds.find(b => {
-        // ค้นหาจากทั้งคำว่า 'รหัสห่วง', 'รหัสพ่อนก', 'รหัสแม่นก' หรือ 'ID'
         const ring = getValue(b, ['รหัสห่วง', 'รหัสพ่อนก', 'รหัสแม่นก', 'ID']).toLowerCase();
         return ring === cleanId;
       });
@@ -163,8 +157,10 @@
       }
 
       const birdId = getValue(bird, ['รหัสห่วง', 'รหัสพ่อนก', 'รหัสแม่นก', 'ID']);
-      const fatherId = getValue(bird, ['รหัสพ่อพันธุ์', 'พ่อ', 'Father ID', 'Father']);
-      const motherId = getValue(bird, ['รหัสแม่พันธุ์', 'แม่', 'Mother ID', 'Mother']);
+      // รองรับทั้ง 'รหัสพ่อนก' และ 'รหัสพ่อพันธุ์'
+      const fatherId = getValue(bird, ['รหัสพ่อนก', 'รหัสพ่อพันธุ์', 'พ่อ', 'Father ID', 'Father']);
+      // รองรับทั้ง 'รหัสแม่นก' และ 'รหัสแม่พันธุ์'
+      const motherId = getValue(bird, ['รหัสแม่นก', 'รหัสแม่พันธุ์', 'แม่', 'Mother ID', 'Mother']);
 
       const father = findBird(fatherId);
       const mother = findBird(motherId);
@@ -204,7 +200,7 @@
         </div>
 
         <div class="tree-section">
-          <h3>🌳 แผนผังสายเลือด (Pedigree Tree)</h3>
+          <h3>🌲 แผนผังสายเลือด (Pedigree Tree)</h3>
           
           <div class="parent-card father">
             <div class="parent-header">
@@ -214,8 +210,8 @@
             <div class="parent-color">${father ? `สี: ${getValue(father, ['สีหัว', 'HEAD'])}/${getValue(father, ['สีอก', 'CHEST'])}/${getValue(father, ['สีตัว', 'BODY'])}` : ''}</div>
             
             <div class="grandparents">
-              <div>├─ <b>ปู่ (Father's Father):</b> ${renderLink(father ? getValue(father, ['รหัสพ่อพันธุ์', 'พ่อ']) : '')}</div>
-              <div>└─ <b>ย่า (Father's Mother):</b> ${renderLink(father ? getValue(father, ['รหัสแม่พันธุ์', 'แม่']) : '')}</div>
+              <div>├─ <b>ปู่ (Father's Father):</b> ${renderLink(father ? getValue(father, ['รหัสพ่อนก', 'รหัสพ่อพันธุ์', 'พ่อ']) : '')}</div>
+              <div>└─ <b>ย่า (Father's Mother):</b> ${renderLink(father ? getValue(father, ['รหัสแม่นก', 'รหัสแม่พันธุ์', 'แม่']) : '')}</div>
             </div>
           </div>
 
@@ -227,8 +223,8 @@
             <div class="parent-color">${mother ? `สี: ${getValue(mother, ['สีหัว', 'HEAD'])}/${getValue(mother, ['สีอก', 'CHEST'])}/${getValue(mother, ['สีตัว', 'BODY'])}` : ''}</div>
             
             <div class="grandparents">
-              <div>├─ <b>ตา (Mother's Father):</b> ${renderLink(mother ? getValue(mother, ['รหัสพ่อพันธุ์', 'พ่อ']) : '')}</div>
-              <div>└─ <b>ยาย (Mother's Mother):</b> ${renderLink(mother ? getValue(mother, ['รหัสแม่พันธุ์', 'แม่']) : '')}</div>
+              <div>├─ <b>ตา (Mother's Father):</b> ${renderLink(mother ? getValue(mother, ['รหัสพ่อนก', 'รหัสพ่อพันธุ์', 'พ่อ']) : '')}</div>
+              <div>└─ <b>ยาย (Mother's Mother):</b> ${renderLink(mother ? getValue(mother, ['รหัสแม่นก', 'รหัสแม่พันธุ์', 'แม่']) : '')}</div>
             </div>
           </div>
         </div>
