@@ -151,11 +151,10 @@
       return '';
     }
 
-    // ฟังก์ชั่นคำนวณอายุจากข้อความวันเกิด
+    // ฟังก์ชั่นคำนวณอายุแบบ ปี เดือน วัน
     function calculateAge(dateStr) {
       if (!dateStr || dateStr === '-') return '';
       
-      // แยกตัวเลข ว/ด/ป หรือ ป-ด-ว
       const parts = dateStr.split(/[/.-]/);
       let birthDate;
       if (parts.length === 3) {
@@ -171,17 +170,27 @@
       if (isNaN(birthDate.getTime())) return '';
 
       const today = new Date();
-      let diffTime = Math.abs(today - birthDate);
-      let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      let years = today.getFullYear() - birthDate.getFullYear();
+      let months = today.getMonth() - birthDate.getMonth();
+      let days = today.getDate() - birthDate.getDate();
 
-      let months = Math.floor(diffDays / 30);
-      let days = diffDays % 30;
-
-      if (months > 0) {
-        return ` <span style="color:var(--primary); font-weight:600;">(อายุ ${months} เดือน ${days} วัน)</span>`;
-      } else {
-        return ` <span style="color:var(--primary); font-weight:600;">(อายุ ${days} วัน)</span>`;
+      if (days < 0) {
+        months--;
+        const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+        days += lastMonth.getDate();
       }
+
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+
+      let ageParts = [];
+      if (years > 0) ageParts.push(years + ' ปี');
+      if (months > 0) ageParts.push(months + ' เดือน');
+      if (days > 0 || ageParts.length === 0) ageParts.push(days + ' วัน');
+
+      return ` <span style="color:var(--primary); font-weight:600;">(อายุ ${ageParts.join(' ')})</span>`;
     }
 
     function findBird(id) {
@@ -256,7 +265,6 @@
         ? '<span class="badge male">♂ เพศผู้</span>' 
         : (genderVal === 'เมีย' || genderVal === 'Female' ? '<span class="badge female">♀ เพศเมีย</span>' : '');
 
-      // ดึงรางวัลของตัวนก พ่อ และ แม่ มารวมกัน
       const birdAward = getValue(bird, ['ประวัติรางวัล', 'รางวัล']);
       const fatherAward = father ? getValue(father, ['ประวัติรางวัล', 'รางวัล']) : '';
       const motherAward = mother ? getValue(mother, ['ประวัติรางวัล', 'รางวัล']) : '';
