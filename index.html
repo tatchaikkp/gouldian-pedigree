@@ -68,8 +68,8 @@
 
     /* Hall of Fame / Award Box Design */
     .award-card { background: linear-gradient(135deg, #fffbe3 0%, #fff7ed 100%); border: 1.5px solid #fde047; padding: 14px 16px; border-radius: 12px; margin-top: 14px; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.08); }
-    .award-title { color: var(--accent-gold); font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-    .award-content { font-size: 14px; color: #78350f; font-weight: 600; line-height: 1.5; }
+    .award-title { color: var(--accent-gold); font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 6px; border-bottom: 1px dashed #fde047; padding-bottom: 4px; }
+    .award-item { font-size: 13.5px; color: #78350f; font-weight: 500; margin: 4px 0; line-height: 1.5; }
 
     /* Country Badge */
     .country-badge { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 10px; }
@@ -184,7 +184,6 @@
       }
     }
 
-    // ฟังก์ชั่นสำหรับเรนเดอร์กล่องตารางสี 3 ช่อง
     function renderColorGrid(birdObj) {
       if (!birdObj) return '<div style="font-size:12px; color:#cbd5e1; margin:6px 0; text-align:center;">ไม่มีข้อมูลสี</div>';
       
@@ -224,11 +223,26 @@
         ? '<span class="badge male">♂ เพศผู้</span>' 
         : (genderVal === 'เมีย' || genderVal === 'Female' ? '<span class="badge female">♀ เพศเมีย</span>' : '');
 
-      const awardVal = getValue(bird, ['ประวัติรางวัล', 'รางวัล']);
-      const awardInfo = awardVal && awardVal !== '-' 
+      // ดึงรางวัลของตัวนก พ่อ และ แม่ มารวมกัน
+      const birdAward = getValue(bird, ['ประวัติรางวัล', 'รางวัล']);
+      const fatherAward = father ? getValue(father, ['ประวัติรางวัล', 'รางวัล']) : '';
+      const motherAward = mother ? getValue(mother, ['ประวัติรางวัล', 'รางวัล']) : '';
+
+      let awardsListHtml = '';
+      if (birdAward && birdAward !== '-') {
+        awardsListHtml += `<div class="award-item">🏆 <b>นกตัวนี้:</b> ${birdAward}</div>`;
+      }
+      if (fatherAward && fatherAward !== '-') {
+        awardsListHtml += `<div class="award-item">🎖️ <b>พ่อพันธุ์ (${fatherId}):</b> ${fatherAward}</div>`;
+      }
+      if (motherAward && motherAward !== '-') {
+        awardsListHtml += `<div class="award-item">🎖️ <b>แม่พันธุ์ (${motherId}):</b> ${motherAward}</div>`;
+      }
+
+      const awardBoxHtml = awardsListHtml !== '' 
         ? `<div class="award-card">
-            <div class="award-title">🎖️ ประวัติรางวัล & เกียรติยศ (Hall of Fame)</div>
-            <div class="award-content">${awardVal}</div>
+            <div class="award-title">🎖️ เกียรติยศ & ประวัติรางวัลสายเลือด (Hall of Fame)</div>
+            ${awardsListHtml}
            </div>` 
         : '';
 
@@ -259,7 +273,7 @@
           <div class="info-row"><span>วันเกิด / วันฟัก:</span> <strong>${getValue(bird, ['วันเกิด', 'BORN']) || '-'}</strong></div>
           <div class="info-row"><span>จุดเด่น / หมายเหตุ:</span> <strong>${getValue(bird, ['จุดเด่น', 'Note', 'หมายเหตุ']) || '-'}</strong></div>
           
-          ${awardInfo}
+          ${awardBoxHtml}
         </div>
 
         <div class="tree-section">
